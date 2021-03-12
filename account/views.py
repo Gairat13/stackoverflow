@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from account.serializers import RegisterSerializer, CreateNewPasswordSerializer
-from account.utils import send_activation_sms
+from account.tasks import send_activation_sms
 
 MyUser = get_user_model()
 
@@ -43,7 +43,7 @@ class ForgotPassword(APIView):
         user.is_active = False
         user.create_activation_code()
         user.save()
-        send_activation_sms(user)
+        send_activation_sms.delay(str(user.phone_number), user.activation_code)
         return Response('Вам отправлено смс', status=status.HTTP_200_OK)
 
 

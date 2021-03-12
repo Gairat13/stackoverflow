@@ -75,12 +75,6 @@ class CommentViewSet(PermissionMixin, viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
-# TODO: подключить Celery
-# TODO: Перевести отправку СМС на CELERY
-# TODO: настроить media
-# TODO: периодически на таски CELERY
 # TODO: деплой
 # TODO: тесты
-# TODO: CKEditor
-# TODO: Фильтрация и поиск в админке
 # TODO: Мультиязычность

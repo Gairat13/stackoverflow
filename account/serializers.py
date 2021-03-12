@@ -2,8 +2,7 @@ from django.contrib.auth import get_user_model
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 
-
-from account.utils import send_activation_sms
+from account.tasks import send_activation_sms
 
 MyUser = get_user_model()
 
@@ -35,7 +34,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = MyUser.objects.create_user(**validated_data)
-        send_activation_sms(user)
+        send_activation_sms.delay(str(user.phone_number), user.activation_code)
         return user
 
 

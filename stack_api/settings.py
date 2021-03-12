@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import os
 from datetime import timedelta
 from pathlib import Path
 from decouple import config
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'phonenumber_field',
     'drf_yasg',
+    'ckeditor',
 
     # my_apps
     'main',
@@ -133,6 +135,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = 'account.MyUser'
 
@@ -152,3 +158,5 @@ SIMPLE_JWT = {
 TWILIO_SID = config('TWILIO_SID')
 TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
 TWILIO_SENDER_PHONE = config('TWILIO_SENDER_PHONE')
+
+CELERY_BROKER_URL = 'redis://localhost:6380'
