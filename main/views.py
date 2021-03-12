@@ -1,8 +1,15 @@
+from django.contrib.auth import get_user_model
+from django.db.models import Q
 from rest_framework import viewsets
-from main.permissions import IsAuthorPermission
-from main.serializers import ProblemCreateSerializer, ReplySerializer, ImageSerializer, CommentSerializer
-from main.models import Problem, Reply, CodeImage, Comment
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from main.models import Problem, Reply, Comment
+from main.permissions import IsAuthorPermission
+from main.serializers import ProblemCreateSerializer, ReplySerializer, CommentSerializer
+
+MyUser = get_user_model()
 
 
 # class ProblemListView(generics.ListAPIView):
@@ -31,6 +38,8 @@ from rest_framework.permissions import IsAuthenticated
 #     queryset = Problem.objects.all()
 #     permission_classes = [ProblemUpdateDeletePermission]
 #
+
+
 class PermissionMixin:
     def get_permissions(self):
         if self.action == 'create':
@@ -46,8 +55,14 @@ class ProblemViewSet(PermissionMixin, viewsets.ModelViewSet):
     queryset = Problem.objects.all()
     serializer_class = ProblemCreateSerializer
 
-    def get_serializer_context(self):
-        return {'request': self.request, 'action': self.action}
+    @action(methods=['GET'], detail=False)
+    def search(self, request):
+        query = request.query_params.get('q')
+        queryset = self.get_queryset().first(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        )
+        serializer = self.get_serializer(queryset, many=True, context={"request": self.request})
+        return Response(serializer.data)
 
 
 class ReplyViewSet(PermissionMixin, viewsets.ModelViewSet):
@@ -60,12 +75,8 @@ class CommentViewSet(PermissionMixin, viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
-# TODO: восстановление пароля
 # TODO: подключить Celery
 # TODO: Перевести отправку СМС на CELERY
-# TODO: Пагинация
-# TODO: фильтрация
-# TODO: Поиск
 # TODO: настроить media
 # TODO: периодически на таски CELERY
 # TODO: деплой
