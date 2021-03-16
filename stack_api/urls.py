@@ -42,10 +42,9 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('api/v1/docs/', schema_view.with_ui()),
+    path('api/v1/accounts/', include('account.urls')),
     path('admin/', admin.site.urls),
-    # path('api/v1/', include('main.urls')),
     path('api/v1/', include(router.urls)),
-    path('api/v1/accounts/', include('account.urls'))
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

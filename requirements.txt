@@ -11,3 +11,4 @@ drf-yasg
 django-ckeditor
 celery
 redis
+django-modeltranslation

@@ -32,8 +32,8 @@ class ImageSerializer(serializers.ModelSerializer):
         return ''
 
     def to_representation(self, instance):
-        representation = super(ImageSerializer, self).to_representation()
-        representation()['image'] = self._get_image_url(instance)
+        representation = super(ImageSerializer, self).to_representation(instance)
+        representation['image'] = self._get_image_url(instance)
         return representation
 
 
@@ -44,7 +44,8 @@ class ProblemCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Problem
-        fields = ('id', 'title', 'description', 'images', 'created', 'updated')
+        fields = ('id', 'title_ru', 'title_en', 'title_ky', 'description_ru', 'description_en', 'description_ky',
+                  'images', 'created', 'updated')
 
     def get_fields(self):
         action = self.context.get('action')
@@ -52,13 +53,14 @@ class ProblemCreateSerializer(serializers.ModelSerializer):
         if action == 'list':
             fields.pop('images')
             fields.pop('created')
-            fields.pop('description')
+            fields.pop('description_ru')
+            fields.pop('description_en')
+            fields.pop('description_ky')
         return fields
 
     def create(self, validated_data):
         request = self.context.get('request')
         images_data = request.FILES
-        print(images_data)
         author = request.user
         problem = Problem.objects.create(author=author, **validated_data)
         for image in images_data.getlist('images'):

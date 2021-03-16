@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -120,9 +121,33 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+gettext = lambda s: s
+
+EXTRA_LANG_INFO = {
+    'ky': {
+        'bidi': False, # right-to-left
+        'code': 'ky',
+        'name': 'Kyrgyz',
+        'name_local': 'Кыргыз тили', #unicode codepoints here
+    },
+}
+
+# Add custom languages not provided by Django
+import django.conf.locale
+LANG_INFO = dict(django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO)
+django.conf.locale.LANG_INFO = LANG_INFO
+
+LANGUAGES = (
+    ('en', gettext('English')),
+    ('ru', gettext('Russian')),
+    ('ky', gettext('Kyrgyz'))
+)
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
+
+TIME_ZONE = 'Asia/Bishkek'
 
 USE_I18N = True
 
